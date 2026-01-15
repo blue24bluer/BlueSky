@@ -48,115 +48,60 @@ To run BlueSky, ensure the following tools are installed:
    cd BlueSky
    ```
 
-2. Run the installation script:
+2. Run the web server:
 
    ```bash
-   bash BlueSky.sh --install
+   python bluesky_main.py
    ```
-   or
-   ```bash
-   ./BlueSky.sh --install
-   ```
-   (Ensure the script is executable: `chmod +x BlueSky.sh`)
+   
+   (Ensure the script is executable: `chmod +x bluesky_main.py`)
 
+3. Run the terminal tool:
+
+    ```bash
+    python Libs/Tools/BlueSky.py
+    ```
 ---
 
 ## Usage 🚀
-
-### Interactive Mode:
-
-To start an interactive search, use the following command:
-
-```bash
-bash BlueSky.sh --start
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                                                                      │
+│ ▄▄▄▄▄▄    ▄▄▄▄                            ▄▄▄▄    ▄▄                 │
+│ ██▀▀▀▀██  ▀▀██                          ▄█▀▀▀▀█   ██                 │
+│ ██    ██    ██      ██    ██   ▄████▄   ██▄       ██ ▄██▀   ▀██  ███ │
+│ ███████     ██      ██    ██  ██▄▄▄▄██   ▀████▄   ██▄██      ██▄ ██  │
+│ ██    ██    ██      ██    ██  ██▀▀▀▀▀▀       ▀██  ██▀██▄      ████▀  │
+│ ██▄▄▄▄██    ██▄▄▄   ██▄▄▄███  ▀██▄▄▄▄█  █▄▄▄▄▄█▀  ██  ▀█▄      ███   │
+│ ▀▀▀▀▀▀▀      ▀▀▀▀    ▀▀▀▀ ▀▀    ▀▀▀▀▀    ▀▀▀▀▀    ▀▀   ▀▀▀     ██    │
+│                                                              ███     │
+│@$blue24bluer                                                          │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
-The tool will prompt you to enter a target (e.g., a phone number, email address, etc.) and perform the search across all supported data types.
-
----
-
-### Direct Search:
-
-You can search directly using one of the following options:
-
-- **Search for a phone number**:
-  ```bash
-  bash BlueSky.sh --phones +1234567890
-  ```
-  or
-  ```bash
-  bash BlueSky.sh -p +1234567890
-  ```
-
-- **Search for a bank account**:
-  ```bash
-  bash BlueSky.sh --banks 1234567890123456
-  ```
-  or
-  ```bash
-  bash BlueSky.sh -b 1234567890123456
-  ```
-
-- **Search for an email address (Gmail)**:
-  ```bash
-  bash BlueSky.sh --email example@gmail.com
-  ```
-  or
-  ```bash
-  bash BlueSky.sh -e example@gmail.com
-  ```
-
-- **Search for an email address (Yahoo)**:
-  ```bash
-  bash BlueSky.sh --yaho example@yahoo.com
-  ```
-  or
-  ```bash
-  bash BlueSky.sh -y example@yahoo.com
-  ```
-
-- **Search for an Instagram username**:
-  ```bash
-  bash BlueSky.sh --insta username
-  ```
-  or
-  ```bash
-  bash BlueSky.sh -i username
-  ```
-
-- **Search for a TikTok username**:
-  ```bash
-  bash BlueSky.sh --tik username
-  ```
-  or
-  ```bash
-  bash BlueSky.sh -t username
-  ```
-
-- **Search for a name or username**:
-  ```bash
-  bash BlueSky.sh --name JohnDoe
-  ```
-  or
-  ```bash
-  bash BlueSky.sh -n JohnDoe
-  ```
-
----
-
-### Display Help Menu:
-
-To display the help menu with a list of all options:
-
-```bash
-bash BlueSky.sh --help
+.1 FOR HELP :
 ```
-or
-```bash
-bash BlueSky.sh -h
+┌─[root@parrot]─[~/DEV/BlueSky/Libs/Tools]
+└──╼ #python BlueSky.py -h
+usage: BlueSky.py [-h] [-s <term>] [-i]
+
+USAGE OF BlueSkay: Search for data.
+
+options:
+  -h, --help            show this help message and exit
+  -s <term>, --search <term>
+                        Search for a term (phone, email, name, etc.).
+  -i, --install         Show instructions to install required tools.
+┌─[root@parrot]─[~/DEV/BlueSky/Libs/Tools]
+└──╼ #
 ```
 
----
+.2 FOR START INSTALLION
+
+```
+┌─[root@parrot]─[~/DEV/BlueSky/Libs/Tools]
+└──╼ #python BlueSky.py -i
+```
 
 ## Contributing 🤝
 
