@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlueSky Engine - Cyber OSINT Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* إعدادات المتغيرات اللونية النيون */
+        :root {
+            --primary: #00f2ff;
+            --primary-rgb: 0, 242, 255;
+            --bg-deep: #05080f;
+            --bg-card: rgba(16, 23, 36, 0.95);
+            --border: rgba(255, 255, 255, 0.08);
+            --glow: 0 0 20px rgba(var(--primary-rgb), 0.3);
+        }
+
+        * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        body {
+            margin: 0;
+            padding: 50px 20px;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-deep);
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 40px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 30px 100px rgba(0,0,0,0.7);
+        }
+
+        h1 {
+            font-size: 55px;
+            text-align: center;
+            margin: 0 0 40px 0;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.4));
+        }
+
+        /* حاوية البحث */
+        .search-container {
+            display: flex;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px;
+            margin-bottom: 40px;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 18px 25px;
+            color: #fff;
+            font-size: 20px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #submit-btn { background: var(--primary); color: #000; }
+        #submit-btn:hover { box-shadow: 0 0 20px var(--primary); transform: translateY(-2px); }
+        #stop-btn { background: #ef4444; color: #fff; display: none; }
+
+        /* منطقة النتائج - فقاعات ذكية */
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bubbles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .bubble {
+            background: rgba(var(--primary-rgb), 0.03);
+            border: 1px solid var(--border);
+            border-right: 5px solid var(--primary);
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            animation: emerge 0.4s ease-out;
+            box-shadow: 5px 5px 20px rgba(0,0,0,0.2);
+        }
+
+        @keyframes emerge { from { opacity: 0; transform: translateY(15px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* فقاعة الأرشيف الموسعة */
+        .master-archive {
+            display: none;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .archive-header {
+            padding: 15px 25px;
+            background: rgba(var(--primary-rgb), 0.1);
+            border-bottom: 1px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .archive-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .archive-item {
+            display: flex;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        .item-id { color: var(--primary); margin-left: 15px; font-weight: bold; min-width: 45px; }
+        .item-text { color: #cbd5e1; word-break: break-all; }
+
+        #terminal {
+            width: 100%;
+            height: 350px;
+            background: #000;
+            border: 1px solid #1e293b;
+            border-radius: 15px;
+            padding: 25px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-y: auto;
+            color: #94a3b8;
+            direction: ltr;
+        }
+
+        .text-neon { color: var(--primary); }
+        .text-error { color: #ef4444; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 35px; }
+            .search-container { flex-direction: column; background: transparent; border: none; }
+            input { background: rgba(0,0,0,0.5); border-radius: 15px; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main-container">
+        <h1>BlueSky</h1>
+
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="اسم الهدف، هاتف، إيميل أو قاعدة بيانات..." autocomplete="off">
+            <button id="submit-btn" class="btn">
+                <span>بـدء الفـحـص</span>
+            </button>
+            <button id="stop-btn" class="btn">
+                <span>إيقاف</span>
+            </button>
+        </div>
+
+        <div class="section-title">
+            <span style="width:10px; height:10px; background:var(--primary); border-radius:50%"></span>
+            المكتشفات الذكية (Top Matches)
+        </div>
+        <div id="bubbles-area" class="bubbles-grid">
+        </div>
+
+        <div id="master-archive" class="master-archive">
+            <div class="archive-header">
+                <span style="font-weight:bold">الأرشيف الموسع (All Findings)</span>
+                <span id="archive-count" class="text-neon">عنصر: 0</span>
+            </div>
+            <div id="archive-list" class="archive-list">
+            </div>
+        </div>
+
+        <div class="section-title">
+            <span style="width:10px; height:10px; background:#64748b; border-radius:50%"></span>
+            Terminal Exec Log
+        </div>
+        <pre id="terminal">System Standby... Waiting for Query.</pre>
+    </main>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+const bubblesArea = document.getElementById('bubbles-area');
+const archive = document.getElementById('master-archive');
+const archiveList = document.getElementById('archive-list');
+const archiveCount = document.getElementById('archive-count');
+const input = document.getElementById('search-input');
+const submitBtn = document.getElementById('submit-btn');
+const stopBtn = document.getElementById('stop-btn');
+
+let controller;
+let matchCounter = 0;
+let uiBuffer = [];
+
+// --- 🛡️ نظام الحماية من المدخلات الخطيرة ---
+
+// التعبير النمطي: يسمح بالأحرف (العربية والانجليزية)، الأرقام، المسافات، الإيميل @، والنقطة.
+// يمنع: ' " ; - / | \ < > { } [ ] $ # ! وغيرها
+const safeRegex = /[^a-zA-Z0-9\u0621-\u064A\s@._-]/g;
+
+input.addEventListener('input', (e) => {
+    if (safeRegex.test(input.value)) {
+        // تنبيه بصري عند إدخال رمز ممنوع
+        input.style.border = "1px solid #ef4444";
+        input.style.boxShadow = "0 0 10px #ef4444";
+
+        // حذف الرموز الممنوعة فوراً
+        input.value = input.value.replace(safeRegex, '');
+
+        setTimeout(() => {
+            input.style.border = "";
+            input.style.boxShadow = "";
+        }, 500);
+    }
+});
+
+// دالة لتطهير النصوص (Sanitize) قبل العرض لمنع XSS
+function escapeHTML(str) {
+    const p = document.createElement('p');
+    p.textContent = str;
+    return p.innerHTML;
+}
+
+// --- نهاية نظام الحماية ---
+
+setInterval(() => {
+    if (uiBuffer.length === 0) return;
+
+    const chunk = uiBuffer.splice(0, 40);
+    const fragment = document.createDocumentFragment();
+
+    chunk.forEach(line => {
+        const row = document.createElement('div');
+        if (line.includes('[FOUND]') || line.includes('[√]')) {
+            row.className = 'text-neon';
+            addMatch(line);
+        }
+        // استخدام textContent بدلاً من innerHTML لمنع XSS
+        row.textContent = line;
+        terminal.appendChild(row);
+    });
+
+    if (terminal.childNodes.length > 600) {
+        for(let i=0; i<150; i++) terminal.removeChild(terminal.firstChild);
+    }
+
+    terminal.scrollTop = terminal.scrollHeight;
+}, 300);
+
+function addMatch(line) {
+    matchCounter++;
+    const cleanText = line.split(']').pop().trim();
+
+    if (matchCounter <= 5) {
+        const div = document.createElement('div');
+        div.className = 'bubble';
+        // حماية البيانات المعروضة داخل الـ Bubble
+        div.innerHTML = `<span style="color:var(--primary)">MATCH #${matchCounter}</span><br><br>${escapeHTML(cleanText)}`;
+        bubblesArea.appendChild(div);
+    } else {
+        archive.style.display = 'block';
+        archiveCount.textContent = `عناصر إضافية: ${matchCounter - 5}`;
+
+        const item = document.createElement('div');
+        item.className = 'archive-item';
+        // حماية البيانات المعروضة داخل الأرشيف
+        item.innerHTML = `<span class="item-id">#${matchCounter}</span><span class="item-text"></span>`;
+        item.querySelector('.item-text').textContent = cleanText; // أمان إضافي
+        archiveList.prepend(item);
+    }
+}
+
+submitBtn.onclick = async () => {
+    // التحقق النهائي من نظافة المدخلات
+    let queryValue = input.value.replace(safeRegex, '').trim();
+    if (!queryValue) return;
+
+    matchCounter = 0;
+    uiBuffer = [];
+    terminal.innerHTML = "> [System] Initiating Secured OSINT Scan...\n";
+    bubblesArea.innerHTML = "";
+    archiveList.innerHTML = "";
+    archive.style.display = "none";
+
+    controller = new AbortController();
+    submitBtn.disabled = true;
+    stopBtn.style.display = "flex";
+
+    try {
+        const response = await fetch('/search', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ query: queryValue }),
+            signal: controller.signal
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const lines = decoder.decode(value).split('\n');
+            lines.forEach(l => { if(l.trim()) uiBuffer.push(l); });
+        }
+    } catch (err) {
+        const errMsg = err.name === 'AbortError' ? ">>> [Warn] Process Terminated By Operator." : `>>> [Error] Connection Refused: ${err}`;
+        uiBuffer.push(errMsg);
+    } finally {
+        submitBtn.disabled = false;
+        stopBtn.style.display = "none";
+    }
+};
+
+stopBtn.onclick = () => controller.abort();
+    </script>
+</body>
+</html>
