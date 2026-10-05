@@ -53,10 +53,31 @@ To run BlueSky, ensure the following tools are installed:
    ```bash
    python bluesky_main.py
    ```
-   
+
+BlueSky-GUI is the graphical user interface of the BlueSky project, designed to provide users with an intuitive and accessible way to interact with the system.
+
+### Interface Preview
+
+<div align="center">
+  <img
+    src="https://i.postimg.cc/2Szm58wB/Screenshot-2026-10-05-004412.png"
+    alt="BlueSky-GUI Interface Preview"
+    width="900"
+  />
+  <p><em>BlueSky-GUI — Graphical User Interface</em></p>
+</div>
+
+### Overview
+
+BlueSky-GUI provides a visual interface for interacting with BlueSky, making its functionality accessible through a graphical environment rather than relying exclusively on command-line interaction.
+
+---
+ 
    (Ensure the script is executable: `chmod +x bluesky_main.py`)
 
-3. Run the terminal tool:
+---
+
+2. Run the terminal tool:
 
     ```bash
     python Libs/Tools/BlueSky.py
